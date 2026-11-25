@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<style>
+  :root{--bg:#fff;--fg:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#2563eb;--hover:#eff6ff}
+  @media (prefers-color-scheme: dark){:root{--bg:#111827;--fg:#f3f4f6;--muted:#9ca3af;--line:#374151;--hover:#1f2937}}
+  body{margin:0;width:340px;font:13px "Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--fg)}
+  header{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+  header img{width:22px;height:22px}
+  header b{font-size:15px;flex:1}
+  .st{font-size:12px;padding:3px 8px;border-radius:999px}
+  .on{background:#dcfce7;color:#166534}.off{background:#fee2e2;color:#991b1b}
+  section{padding:10px 14px;border-bottom:1px solid var(--line)}
+  label{display:flex;align-items:center;justify-content:space-between;padding:5px 0;cursor:pointer}
+  h4{margin:0 0 6px;font-size:12px;color:var(--muted);font-weight:600}
+  .item{display:flex;align-items:center;gap:8px;padding:7px 6px;border-radius:6px}
+  .item:hover{background:var(--hover)}
+  .item .n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:right}
+  .item .s{color:var(--muted);font-size:12px}
+  button.dl{border:0;background:var(--accent);color:#fff;border-radius:6px;padding:5px 10px;cursor:pointer;font:inherit}
+  button.dl:hover{filter:brightness(.92)}
+  .empty{color:var(--muted);padding:6px 0;line-height:1.6}
+  #msg{color:var(--muted);font-size:12px;padding:8px 14px}
+</style>
+</head>
+<body>
+  <header><img src="icons/48.png" alt=""><b>FastDM</b><span id="status" class="st">…</span></header>
+  <section>
+    <label>إظهار الأيقونة العائمة فوق الفيديوهات والملفات <input type="checkbox" id="floating"></label>
+    <label>تحميل كل ملفات المتصفح بـ FastDM <input type="checkbox" id="intercept"></label>
+  </section>
+  <section id="pageSec" style="display:none">
+    <button class="dl" id="pageBtn" style="width:100%;padding:9px">⬇ تحميل فيديو الصفحة دي (اختيار الجودة)</button>
+  </section>
+  <section>
+    <h4>الفيديوهات والملفات في الصفحة دي</h4>
+    <div id="list"></div>
+  </section>
+  <div id="msg"></div>
+  <script src="popup.js"></script>
+</body>
+</html>

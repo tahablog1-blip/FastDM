@@ -1,0 +1,57 @@
+name: Build Windows release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install -U pyinstaller "yt-dlp[default]" imageio-ffmpeg deno
+
+      - name: Build FastDM.exe
+        shell: pwsh
+        run: |
+          $deno = python -c "import deno;print(deno.find_deno_bin())"
+          python -m PyInstaller --noconfirm --onedir --windowed --name FastDM --icon icon.ico `
+            --collect-submodules yt_dlp --collect-data yt_dlp_ejs --collect-data imageio_ffmpeg `
+            --add-binary "$deno;." FastDM.py
+
+      - name: Smoke test (imports and bundled tools)
+        shell: pwsh
+        run: |
+          python -c "import engine, bridge, ytdl; print('ffmpeg:', bool(ytdl.ffmpeg_path()), 'yt-dlp:', ytdl.available())"
+          if (!(Test-Path dist/FastDM/FastDM.exe)) { throw "FastDM.exe missing" }
+
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force release/FastDM | Out-Null
+          Copy-Item -Recurse dist/FastDM/* release/FastDM/
+          Copy-Item -Recurse extension release/FastDM/extension
+          Copy-Item README.md release/FastDM/
+          Compress-Archive -Path release/FastDM -DestinationPath FastDM-Windows.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FastDM-Windows
+          path: FastDM-Windows.zip
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: FastDM-Windows.zip
+          generate_release_notes: true
